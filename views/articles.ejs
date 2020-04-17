@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Title</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="./styles/styles.css">
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="text-center mb-4 mr-2 heading">
+            <img src="./src/new_york.png" alt="" width="200px">
+        </div>
+        <a href="#home" class="my">Dashboard</a>
+        <a href="#services" class="inactive">Articles</a>
+        <a href="#clients" class="inactive">Analytics</a>
+        <a href="#clients" class="inactive">Messages</a>
+        <a href="#clients" class="inactive">Calendar</a>
+    </div>
+
+    <div class="mysearch">
+        <div>
+            <i class="fa fa-search" aria-hidden="true"></i>
+            <input type="text" class="form-control input" placeholder="Search" />
+            <button class="button btn">Search</button>
+        </div>
+        <div class="container mt-4">
+            <p>
+                Here are your results for "<%=query%>"
+            </p>
+            <h4 class="mb-3">ARTICLES</h4>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Published Date</th>
+                        <th scope="col">Headline</th>
+                        <th scope="col">Summary</th>
+                        <th scope="col">URL</th>
+                        <th scope="col">Source</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% articles.forEach(target=>{ %>
+                    <tr>
+                        <th scope="row"><%=target.pub_date.substring(0,10)%></th>
+                        <td><%=target.headline.main.substring(0,10)%></td>
+                        <td><%=target.lead_paragraph.substring(0,10)%></td>
+                        <td><a href="<%=target.web_url%>"><%=target.web_url.substring(0,10)%></a></td>
+                        <td><%=target.source%></td>
+                    </tr>
+                    <% }) %>
+
+                </tbody>
+            </table>
+            <div class="pagination">
+                <% for(let i=1;i<=10;i++){ %>
+                <% if(page==i){ %>
+                <a href="http://localhost:3000/articles?query=<%=query%>&page=<%=i%>&limit=5" class="active"><%=i%></a>
+                <% } else{ %>
+                <a href=" http://localhost:3000/articles?query=<%=query%>&page=<%=i%>&limit=5"><%=i%></a>
+                <% } %>
+                <%} %>
+
+            </div>
+        </div>
+        <canvas id="myChart" width="400" height="400"></canvas>
+    </div>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"
+        integrity="sha256-R4pqcOYV8lt7snxMQO/HSbVCFRPMdrhAFMH+vr9giYI=" crossorigin="anonymous"></script>
+    <script>
+        getData();
+        function createChart(ylabels) {
+            // console.log(ylabels);
+            var ctx = document.getElementById('myChart').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020],
+                    datasets: [{
+                        label: '# of Votes',
+                        data: ylabels,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+        };
+        function getData() {
+            const ylabels = [];
+
+            var query = '<%-JSON.stringify(query) %>';
+            query = query.slice(1, -1);
+            axios.get(`https://api.nytimes.com/svc/search/v2/articlesearch.json?q=${query}&begin_date=20110101&end_date=20120101&api-key=Mku2VBAV1JuAn7Wq7ug0hHd1uOKhim2n`)
+                .then((response) => {
+                    ylabels.push(response.data.response.meta.hits);
+                    axios.get(`https://api.nytimes.com/svc/search/v2/articlesearch.json?q=${query}&begin_date=20120101&end_date=20130101&api-key=Mku2VBAV1JuAn7Wq7ug0hHd1uOKhim2n`)
+                        .then((response) => {
+                            ylabels.push(response.data.response.meta.hits);
+                            axios.get(`https://api.nytimes.com/svc/search/v2/articlesearch.json?q=${query}&begin_date=20130101&end_date=20140101&api-key=Mku2VBAV1JuAn7Wq7ug0hHd1uOKhim2n`)
+                                .then((response) => {
+                                    ylabels.push(response.data.response.meta.hits);
+                                    axios.get(`https://api.nytimes.com/svc/search/v2/articlesearch.json?q=${query}&begin_date=20140101&end_date=20150101&api-key=Mku2VBAV1JuAn7Wq7ug0hHd1uOKhim2n`)
+                                        .then(response => {
+                                            ylabels.push(response.data.response.meta.hits);
+                                            axios.get(`https://api.nytimes.com/svc/search/v2/articlesearch.json?q=${query}&begin_date=20150101&end_date=20160101&api-key=Mku2VBAV1JuAn7Wq7ug0hHd1uOKhim2n`)
+                                                .then(response => {
+                                                    ylabels.push(response.data.response.meta.hits);
+                                                    axios.get(`https://api.nytimes.com/svc/search/v2/articlesearch.json?q=${query}&begin_date=20160101&end_date=20170101&api-key=Mku2VBAV1JuAn7Wq7ug0hHd1uOKhim2n`)
+                                                        .then(response => {
+                                                            ylabels.push(response.data.response.meta.hits);
+                                                            axios.get(`https://api.nytimes.com/svc/search/v2/articlesearch.json?q=${query}&begin_date=20170101&end_date=20180101&api-key=Mku2VBAV1JuAn7Wq7ug0hHd1uOKhim2n`)
+                                                                .then(response => {
+                                                                    ylabels.push(response.data.response.meta.hits);
+                                                                    axios.get(`https://api.nytimes.com/svc/search/v2/articlesearch.json?q=${query}&begin_date=20180101&end_date=20190101&api-key=Mku2VBAV1JuAn7Wq7ug0hHd1uOKhim2n`)
+                                                                        .then(response => {
+                                                                            ylabels.push(response.data.response.meta.hits);
+                                                                            axios.get(`https://api.nytimes.com/svc/search/v2/articlesearch.json?q=${query}&begin_date=20190101&end_date=20200101&api-key=Mku2VBAV1JuAn7Wq7ug0hHd1uOKhim2n`)
+                                                                                .then(response => {
+
+                                                                                    ylabels.push(response.data.response.meta.hits);
+                                                                                    createChart(ylabels);
+                                                                                })
+                                                                                .catch(err => console.log(err))
+
+                                                                        })
+                                                                        .catch(err => console.log(err))
+
+                                                                })
+                                                                .catch(err => console.log(err))
+
+                                                        })
+                                                        .catch(err => console.log(err))
+
+
+                                                })
+                                                .catch(err => console.log(err))
+                                        })
+                                        .catch(err => console.log(err))
+                                })
+                                .catch(err => console.log(err));
+
+                        })
+                        .catch((err) => console.log(err));
+
+                })
+                .catch((err) => console.log(err));
+
+        }
+
+
+    </script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

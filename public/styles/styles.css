@@ -1,0 +1,99 @@
+body {
+  background-color: #f3f5f6;
+}
+.sidebar {
+  height: 100%;
+  width: 250px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #f6f8f8;
+  overflow-x: hidden;
+  padding-top: 16px;
+}
+
+.sidebar a {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 20px;
+  display: block;
+}
+.my,
+.sidebar a:hover {
+  background-color: #f3f5f6;
+  color: #75b8fe;
+}
+.inactive {
+  color: black;
+}
+.mysearch {
+  position: absolute;
+  left: 20%;
+  margin: 20px;
+}
+.fa.fa-search {
+  position: relative;
+  left: 30px;
+  top: 0px;
+}
+.input {
+  padding-left: 35px !important;
+  width: 600px !important;
+  display: inline-block !important;
+}
+.bmain {
+  margin-top: 95px;
+}
+.button {
+  margin-left: 20px;
+  height: calc(1.5em + 0.75rem + 2px);
+  width: 155px;
+  background-color: #99c8fa;
+  border-radius: 25px;
+  color: white;
+  font-weight: bold;
+}
+.body {
+  font-size: 40px;
+}
+.main {
+  margin-left: 160px;
+  padding: 0px 10px;
+}
+.head {
+  border-top: none !important;
+}
+.heading {
+  font-size: 23px;
+  font-family: "";
+}
+.pagination {
+  display: inline-block;
+}
+
+.pagination a {
+  color: black;
+  float: left;
+  padding: 8px 16px;
+  text-decoration: none;
+}
+
+.pagination a.active {
+  background-color: rgb(114, 177, 245);
+  color: white;
+  border-radius: 5px;
+}
+
+.pagination a:hover:not(.active) {
+  background-color: #ddd;
+  border-radius: 5px;
+}
+@media screen and (max-height: 450px) {
+  .sidebar {
+    padding-top: 15px;
+  }
+  .sidebar a {
+    font-size: 18px;
+  }
+}
